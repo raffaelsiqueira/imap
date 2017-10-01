@@ -3,28 +3,14 @@
 (function() {
 
   var socket = io();
-  var canvas = document.getElementsByClassName('whiteboard')[0];
-  var colors = document.getElementsByClassName('color');
-  var context = canvas.getContext('2d');
 
   var current = {
     color: 'black'
   };
 
-  var drawing = false;
   var dragging = false;
 
-  for (var i = 0; i < colors.length; i++){
-    colors[i].addEventListener('click', false);
-  }
-
-  socket.on('drawing', onDrawingEvent);
   socket.on('dragging', onDraggingEvent);
-
-
-  window.addEventListener('resize', onResize, false);
-  onResize();
-
 
               var selectedNode = 0;
               var cy = window.cy = cytoscape({
@@ -99,8 +85,6 @@
             });
 
 
-
-
             cy.zoom(1.5);
             cy.maxZoom(9999999);  
 
@@ -128,8 +112,6 @@
               cy.on('mouseup','node', function(e){
                   if (!dragging) { return; }
                     dragging = false;
-                    drawLine(posicao.x, posicao.y, e.cyRenderedPosition.x, e.cyRenderedPosition.y, current.color, true);
-
                     selectedNode = e.cyTarget.id();
                    updatePosition(e.cyPosition.x, e.cyPosition.y, selectedNode, true);
               });
@@ -158,43 +140,10 @@
               // });
 
 
-  function drawLine(x0, y0, x1, y1, color, emit){
-    context.beginPath();
-    context.moveTo(x0, y0);
-    context.lineTo(x1, y1);
-    context.strokeStyle = color;
-    context.lineWidth = 2;
-    context.stroke();
-    context.closePath();
-
-    if (!emit) { return; }
-    var w = canvas.width;
-    var h = canvas.height;
-    
-    socket.emit('drawing', {
-      x0: x0 / w,
-      y0: y0 / h,
-      x1: x1 / w,
-      y1: y1 / h,
-      color: color
-    });
-  }
-
 
 
 function updatePosition(x0, y0, selectedNode, emit){
  
-
-// cy.getElementById(selectedNode).positions(function(i, ele){
-//      return{
-
-//           x : cy.getElementById(selectedNode).position(x0),
-//           y : cy.getElementById(selectedNode).position(y0)
-
-//     };
-// });
-;
-
     cy.$('#' + selectedNode).position({
       x: x0,
       y: y0
@@ -211,7 +160,6 @@ function updatePosition(x0, y0, selectedNode, emit){
          });
 }
 
-
   // limit the number of events per second
   function throttle(callback, delay) {
     var previousCall = new Date().getTime();
@@ -225,24 +173,12 @@ function updatePosition(x0, y0, selectedNode, emit){
     };
   }
 
-  function onDrawingEvent(data){
-    var w = canvas.width;
-    var h = canvas.height;
-    drawLine(data.x0 * w, data.y0 * h, data.x1 * w, data.y1 * h, data.color);
-  }
-
   function onDraggingEvent(data){
       var w = cy.width();
       var h = cy.height();
       updatePosition(data.x0 * w, data.y0 * h, data.selectedNode);
       // cy.getElementById(data.selectedNode).position(data.x0 * w, data.y0 * h);
        // cy.getElementById(selectedNode).position(x0,y0);
-  }
-
-  // make the canvas fill its parent
-  function onResize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
   }
 
 })();

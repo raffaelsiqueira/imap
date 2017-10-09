@@ -189,55 +189,7 @@
       }
     }
     //$("#add").on('click', add());
-      function add(){
-        let idText = $("#nodeName").val();
-        let nivelPai = cy.getElementById(selectedNode).data("nivel");
-        if (idText == ''){
-          alert("Write the name of the node!");
-        }else{
-          if (!(cy.nodes().length == 0)){
-            cy.add([
-              { group: "nodes", data: {id:  i+1, idNome:idText, level: cy.getElementById(selectedNode).nivel + 1  }, position: {x: cy.getElementById(selectedNode).position("x")+50, y: cy.getElementById(selectedNode).position("y")+50}},
-              { group: "edges", data: { id: 'edge'+i, source: selectedNode, target: i+1}}
-            ]);
-            cy.getElementById(i+1).data("nivel", nivelPai + 1);
-            //console.log(cy.getElementById(idText).data("nivel"));
-            
-            i++;
-          }else{
-            cy.add([
-              { group: "nodes", data: {id:  idText, idNome:idText  }, position: {x: 0, y: 0}},
-            ]);
-            selectedNode = idText;
-            cy.getElementById(selectedNode).style("background-color","#000000");
-          }
-          $('#createNodeModal').modal('hide');
-          $('#createNodeModal').find('.modal-body input').val("")
-        }
-        var nodeLevel = cy.getElementById(i).data("nivel");
-        if(nodeLevel == 1){
-          cy.getElementById(i).style('shape', 'triangle');
-          cy.getElementById(i).style("background-color","#00FF00");
-          cy.getElementById(i).data('type', 'Scenario');
-        }
-        else if(nodeLevel == 2){
-          cy.getElementById(i).style('shape', 'roundrectangle');
-          cy.getElementById(i).style("background-color","#FF8C00"); 
-          cy.getElementById(i).data('type', 'Alternative');
-        }
-        else if(nodeLevel == 3){
-          cy.getElementById(i).style('shape', 'diamond');
-          cy.getElementById(i).style("background-color","#0000FF");
-          cy.getElementById(i).data('type', 'Implication');
-        }
-        else if(nodeLevel == 4){
-          cy.getElementById(i).style('shape', 'star');
-          cy.getElementById(i).style("background-color","#FF0000");
-          cy.getElementById(i).data('type', 'Impact');
-        }
-        
-        //cy.fit();
-      }
+     
     function remove(){
       var idAtual = cy.getElementById(selectedNode).data("id");
       var arestas = cy.elements('edge[source=idAtual]');

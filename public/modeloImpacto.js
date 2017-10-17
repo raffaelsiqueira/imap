@@ -1,5 +1,5 @@
-   let i = 0;
-    let nId = 1;
+   // let i = 0;
+    // let nId = 1;
     var pressedShift = false;
     //location.href = "lerJSON.php";
     //alert(testeSQL);

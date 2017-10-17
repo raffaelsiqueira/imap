@@ -8,10 +8,9 @@ const port = process.env.PORT || 8000;
 app.use(express.static(__dirname + '/public'));
 
 function onConnection(socket){
+	//declaro todas as funções no nosso arquivo servidor. Emito o evento que eu quero junto com o seu parametro
+  socket.on('adding', (nodedata) => socket.broadcast.emit('adding', nodedata));
   socket.on('dragging', (data) => socket.broadcast.emit('dragging', data));
-  // socket.on('drawing', (data) => socket.broadcast.emit('drawing', data));
-  // socket.on('cytoscape', (data) => socket.broadcast.emit('cytoscape', data));
-
 }
 
 io.on('connection', onConnection);

@@ -1,6 +1,9 @@
 'use strict';
 
+//Sempre declare variáveis globais fora do escopo local. Senão elas vão resetar e não vai funcionar
 var selectedNode = 0;
+var i = 0;
+
 (function() {
 
   var socket = io();
@@ -11,8 +14,11 @@ var selectedNode = 0;
 
   var dragging = false;
 
-  socket.on('dragging', onDraggingEvent);
 
+  //chamo as funções do socket via os eventos abaixo. Eles são chamados quando executamos o socket.emit
+  socket.on('adding', onAddingEvent);
+  socket.on('dragging', onDraggingEvent);
+  
       
       var cy = window.cy = cytoscape({
           container: document.getElementById('cy'),
@@ -69,6 +75,7 @@ var selectedNode = 0;
         cy.zoom(4);
         cy.maxZoom(9999999);
 
+            //declaro um objeto vazio para armazenar as posições do nó selecionado
             var posicao = {
 
             };
@@ -81,10 +88,9 @@ var selectedNode = 0;
               });
 
             cy.on('mousedown','node', function(e){
+              //troco o valor dessa variavel para permitir a emissão do evento
                 dragging = true;
                 selectedNode = e.cyTarget.id();
-                // posicao.x  = e.cyRenderedPosition.x;
-                // posicao.y = e.cyRenderedPosition.y;
                   posicao.x  = e.cyRenderedPosition.x;
                   posicao.y = e.cyRenderedPosition.y;
               });
@@ -93,6 +99,7 @@ var selectedNode = 0;
                   if (!dragging) { return; }
                     dragging = false;
                     selectedNode = e.cyTarget.id();
+                    //quando solto o botão do mouse, mando atualizar a posição do nó 
                    updatePosition(e.cyPosition.x, e.cyPosition.y, selectedNode, true);
               });
 
@@ -103,12 +110,17 @@ function updatePosition(x0, y0, selectedNode, emit){
       y: y0
     });
 
+    //essa validação do emit tem uma tirada importante. Quando chamamos no onDraggingEvent, o valor
+    //emit não é enviado. Ele então é dado como undefined e nega a emissão. Isso evita o loop que
+    //iria acontecer quando essa função chega no cliente. O mesmo só atualiza o valor e para de emitir.
      if (!emit) { return; }
         var w = cy.width();
         var h = cy.height();
 
+
+    //Emito os valores que eu quero para a função desejada
         socket.emit('dragging', {
-            x0: x0 / w,
+            x0: x0 / w,   //divido por w e h só para ter o valor certo do viewport atual
             y0: y0 / h,
             selectedNode: selectedNode
          });
@@ -130,38 +142,30 @@ function updatePosition(x0, y0, selectedNode, emit){
   function onDraggingEvent(data){
       var w = cy.width();
       var h = cy.height();
-      updatePosition(data.x0 * w, data.y0 * h, data.selectedNode);
+      updatePosition(data.x0 * w, data.y0 * h, data.selectedNode); 
+      //chamo a função novamente para gerá-los no cliente
+
       // cy.getElementById(data.selectedNode).position(data.x0 * w, data.y0 * h);
-       // cy.getElementById(selectedNode).position(x0,y0);
+      // cy.getElementById(selectedNode).position(x0,y0);
   }
 
 
-$('#add').click(function () {
-        let idText = $("#nodeName").val();
-        let nivelPai = cy.getElementById(selectedNode).data("nivel");
-        if (idText == ''){
-          alert("Write the name of the node!");
-        }else{
-          if (!(cy.nodes().length == 0)){
-            cy.add([
-              { group: "nodes", data: {id:  i+1, idNome:idText, level: cy.getElementById(selectedNode).nivel + 1  }, position: {x: cy.getElementById(selectedNode).position("x")+50, y: cy.getElementById(selectedNode).position("y")+50}},
-              { group: "edges", data: { id: 'edge'+i, source: selectedNode, target: i+1}}
-            ]);
-            cy.getElementById(i+1).data("nivel", nivelPai + 1);
-            //console.log(cy.getElementById(idText).data("nivel"));
-            
-            i++;
-          }else{
-            cy.add([
-              { group: "nodes", data: {id:  idText, idNome:idText  }, position: {x: 0, y: 0}},
-            ]);
-            selectedNode = idText;
-            cy.getElementById(selectedNode).style("background-color","#000000");
-          }
-          $('#createNodeModal').modal('hide');
-          $('#createNodeModal').find('.modal-body input').val("")
-        }
-        var nodeLevel = cy.getElementById(i).data("nivel");
+  function onAddingEvent(nodedata){
+    console.log("evento");
+    addNode(nodedata.selectedNode, nodedata.idText, nodedata.nivelPai);
+  }
+
+
+
+function addNode(selectedNode, idText, nivelPai , emit){ //ivalue
+    cy.add([
+          { group: "nodes", data: {id:  i+1, idNome:idText, level: nivelPai + 1  }, position: {x: cy.getElementById(selectedNode).position("x")+50, y: cy.getElementById(selectedNode).position("y")+50}},
+          { group: "edges", data: { id: 'edge'+i, source: selectedNode, target: i+1}}
+    ]);
+    cy.getElementById(i+1).data("nivel", nivelPai + 1);
+    i++;
+
+    var nodeLevel = cy.getElementById(i).data("nivel");
         if(nodeLevel == 1){
           cy.getElementById(i).style('shape', 'triangle');
           cy.getElementById(i).style("background-color","#00FF00");
@@ -182,13 +186,38 @@ $('#add').click(function () {
           cy.getElementById(i).style("background-color","#FF0000");
           cy.getElementById(i).data('type', 'Impact');
         }
+
+    if (!emit) { return; }
+
+        socket.emit('adding', {
+            selectedNode: selectedNode,
+            idText: idText,
+            nivelPai: nivelPai,
+            // i: i
+        });
+        //eu falei merda ontem. Emitir o i não é importante nesse caso, pois ele será gerado assim que 
+        //a função for emitida novamente. Então, deixa o i em paz e mantém ele global, rindo
         
-        //cy.fit();
+}
+
+
+
+
+
+$('#add').on('click', function () {
+        let idText = $("#nodeNames").val();
+        let nivelPai = cy.getElementById(selectedNode).data("nivel");
+        var nodeLevel = cy.getElementById(i).data("nivel");
+        if (idText == ''){
+          alert("Write the name of the node!");
+        }else{
+          if (!(cy.nodes().length == 0)){
+           addNode(selectedNode, idText, nivelPai, true);
+          }
+        $('#createNodeModal').modal('hide');
+        $('#createNodeModal').find('.modal-body input').val("")
+        }
+
       });
-
-
-
-
-
 })();
 

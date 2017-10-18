@@ -10,6 +10,7 @@ app.use(express.static(__dirname + '/public'));
 function onConnection(socket){
 	//declaro todas as funções no nosso arquivo servidor. Emito o evento que eu quero junto com o seu parametro
   socket.on('adding', (nodedata) => socket.broadcast.emit('adding', nodedata));
+  socket.on('removing', (nodeData) => socket.broadcast.emit('removing', nodeData));
   socket.on('dragging', (data) => socket.broadcast.emit('dragging', data));
 }
 

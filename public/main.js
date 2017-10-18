@@ -17,6 +17,7 @@ var i = 0;
 
   //chamo as funções do socket via os eventos abaixo. Eles são chamados quando executamos o socket.emit
   socket.on('adding', onAddingEvent);
+  socket.on('removing', onRemovingEvent);
   socket.on('dragging', onDraggingEvent);
   
       
@@ -155,6 +156,11 @@ function updatePosition(x0, y0, selectedNode, emit){
     addNode(nodedata.selectedNode, nodedata.idText, nodedata.nivelPai);
   }
 
+  function onRemovingEvent(nodeData){
+    console.log("Removing");
+    removeNode(nodeData.selectedNode, nodeData.idAtual, nodeData.temFilho);
+  }
+
 
 
 function addNode(selectedNode, idText, nivelPai , emit){ //ivalue
@@ -194,15 +200,45 @@ function addNode(selectedNode, idText, nivelPai , emit){ //ivalue
             idText: idText,
             nivelPai: nivelPai,
             // i: i
-        });
-        //eu falei merda ontem. Emitir o i não é importante nesse caso, pois ele será gerado assim que 
-        //a função for emitida novamente. Então, deixa o i em paz e mantém ele global, rindo
-        
+        });     
 }
 
+function removeNode(selectedNode, idAtual, temFilho, emit){
+    let saveNode = selectedNode;
+    let passow = false;
+    cy.edges().forEach(function (edge){
+      if(edge.source().id() == selectedNode){
+        alert("You can only remove leaves");
+        temFilho=1;
+        return;
+      }
+    });
+    cy.edges().forEach(function (edge){
+    if(edge.target().id() == selectedNode){
+      selectedNode = edge.source().id();
+      passow = true;
+    }
+  });
+    if(temFilho==0){
+      cy.getElementById(saveNode).remove();
+    }
+    
+    if (!passow){
+      if (!(cy.nodes().length == 0)){
+        selectedNode = cy.nodes()[0].id();
+      }
+    }
 
+    if (!emit) { return; }
 
+        socket.emit('removing', {
+            selectedNode: saveNode,
+            idAtual: idAtual,
+            temFilho: temFilho,
+            // i: i
+        });
 
+}
 
 $('#add').on('click', function () {
         let idText = $("#nodeNames").val();
@@ -219,5 +255,17 @@ $('#add').on('click', function () {
         }
 
       });
-})();
 
+$('#remove').on('click', function () {
+      var idAtual = cy.getElementById(selectedNode).data("id");
+      var temFilho = 0;
+      if(cy.getElementById(selectedNode).data("nivel") == 0){
+        //alert("Você não pode remover a raiz!");
+        alert("Unable to remove parents!");
+      }
+      else{
+        removeNode(selectedNode, idAtual, temFilho, true);
+      }
+});
+
+})();

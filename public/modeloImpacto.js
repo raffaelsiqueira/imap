@@ -190,16 +190,16 @@
     }
     //$("#add").on('click', add());
      
-    function remove(){
+    /*function remove(){
       var idAtual = cy.getElementById(selectedNode).data("id");
       var arestas = cy.elements('edge[source=idAtual]');
       var temFilho = 0;
       if(cy.getElementById(selectedNode).data("nivel") == 0){
         //alert("Você não pode remover a raiz!");
         alert("Unable to remove parents!");
-      }/*else if(arestas!==undefined){
+      }else if(arestas!==undefined){
         alert("Voce so pode remover folhas");
-      }*/
+      }
       else{
         let saveNode = selectedNode;
         let passow = false;
@@ -227,16 +227,18 @@
         }
         //cy.getElementById(selectedNode).style("background-color","#000000");
       }
-    }
+    }*/
     $("#edit").on ("click",function (){
       let idText = $("#nodeRename").val();
       cy.getElementById(selectedNode).data("idNome", idText);
       $('#renameNodeModal').modal('hide');
       $('#renameNodeModal').find('.modal-body input').val("")
     });
+
     function center(){
       cy.fit();
     }
+
     $('#descriptionModal').on('show.bs.modal', function (event) {
       var button = $(event.relatedTarget) // Button that triggered the modal
       var recipient = button.data('whatever') // Extract info from data-* attributes
@@ -247,6 +249,7 @@
       modal.find('.modal-title').text('Description of ' + cy.getElementById(selectedNode).data("idNome"))
       modal.find('.modal-body input').val(text)
     });
+
     $('#createNodeModal').on('show.bs.modal', function (event) {
       var button = $(event.relatedTarget) // Button that triggered the modal
       var recipient = button.data('whatever') // Extract info from data-* attributes
@@ -255,6 +258,7 @@
       var modal = $(this)
       modal.find('.modal-title').text('Creating a new node')
     });
+
     $('#renameNodeModal').on('show.bs.modal', function (event) {
       var button = $(event.relatedTarget) // Button that triggered the modal
       var recipient = button.data('whatever') // Extract info from data-* attributes

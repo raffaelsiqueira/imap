@@ -19,6 +19,7 @@ var i = 0;
   socket.on('adding', onAddingEvent);
   socket.on('removing', onRemovingEvent);
   socket.on('dragging', onDraggingEvent);
+  socket.on('renaming', onRenamingEvent);
   
       
       var cy = window.cy = cytoscape({
@@ -73,7 +74,7 @@ var i = 0;
         });
 
 
-        cy.zoom(4);
+        cy.zoom(3);
         cy.maxZoom(9999999);
 
             //declaro um objeto vazio para armazenar as posições do nó selecionado
@@ -83,6 +84,8 @@ var i = 0;
 
             cy.on('click','node', function(e){
               selectedNode = e.cyTarget.id();
+              cy.nodes().style('border-width', 'none');
+              cy.nodes().style('border-color', 'white');
               cy.getElementById(selectedNode).style('border-width', '1');
               cy.getElementById(selectedNode).style('border-color', 'black');
 
@@ -159,6 +162,11 @@ function updatePosition(x0, y0, selectedNode, emit){
   function onRemovingEvent(nodeData){
     console.log("Removing");
     removeNode(nodeData.selectedNode, nodeData.idAtual, nodeData.temFilho);
+  }
+
+  function onRenamingEvent(nodeDataRename){
+    console.log("Renaming");
+    renameNode(nodeDataRename.selectedNode, nodeDataRename.idText);
   }
 
 
@@ -240,6 +248,19 @@ function removeNode(selectedNode, idAtual, temFilho, emit){
 
 }
 
+function renameNode(selectedNode, idText, emit){  
+  cy.getElementById(selectedNode).data("idNome", idText);
+  $('#renameNodeModal').modal('hide');
+  $('#renameNodeModal').find('.modal-body input').val("")
+
+  if (!emit) { return; }
+
+      socket.emit('renaming', {
+          selectedNode: selectedNode,
+          idText: idText,
+      });
+}
+
 $('#add').on('click', function () {
         let idText = $("#nodeNames").val();
         let nivelPai = cy.getElementById(selectedNode).data("nivel");
@@ -266,6 +287,11 @@ $('#remove').on('click', function () {
       else{
         removeNode(selectedNode, idAtual, temFilho, true);
       }
+});
+
+$("#edit").on ("click",function (){
+  let idText = $("#nodeRename").val();
+  renameNode(selectedNode, idText, true);      
 });
 
 })();

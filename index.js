@@ -12,6 +12,7 @@ function onConnection(socket){
   socket.on('adding', (nodedata) => socket.broadcast.emit('adding', nodedata));
   socket.on('removing', (nodeData) => socket.broadcast.emit('removing', nodeData));
   socket.on('dragging', (data) => socket.broadcast.emit('dragging', data));
+  socket.on('renaming', (nodeDataRename) => socket.broadcast.emit('renaming', nodeDataRename));
 }
 
 io.on('connection', onConnection);

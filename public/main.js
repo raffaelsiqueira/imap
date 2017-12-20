@@ -21,6 +21,7 @@ var i = 0;
   socket.on('adding', onAddingEvent);
   socket.on('removing', onRemovingEvent);
   socket.on('dragging', onDraggingEvent);
+  socket.on('renaming', onRenamingEvent);
   
       
       var cy = window.cy = cytoscape({
@@ -165,6 +166,11 @@ function updatePosition(x0, y0, selectedNode, emit){
     removeNode(nodeData.selectedNode, nodeData.idAtual, nodeData.temFilho);
   }
 
+  function onRenamingEvent(nodeDataRename){
+    console.log("Renaming");
+    renameNode(nodeDataRename.selectedNode, nodeDataRename.idText);
+  }
+
 
 
 function addNode(selectedNode, idText, nivelPai , emit){ //ivalue
@@ -244,6 +250,19 @@ function removeNode(selectedNode, idAtual, temFilho, emit){
 
 }
 
+function renameNode(selectedNode, idText, emit){  
+  cy.getElementById(selectedNode).data("idNome", idText);
+  $('#renameNodeModal').modal('hide');
+  $('#renameNodeModal').find('.modal-body input').val("")
+
+  if (!emit) { return; }
+
+      socket.emit('renaming', {
+          selectedNode: selectedNode,
+          idText: idText,
+      });
+}
+
 $('#add').on('click', function () {
         let idText = $("#nodeNames").val();
         let nivelPai = cy.getElementById(selectedNode).data("nivel");
@@ -274,6 +293,7 @@ $('#remove').on('click', function () {
 
 });
 
+<<<<<<< HEAD
   var FADE_TIME = 150; // ms
   var TYPING_TIMER_LENGTH = 400; // ms
   var COLORS = [
@@ -563,5 +583,11 @@ $('#remove').on('click', function () {
 
 
 
+=======
+$("#edit").on ("click",function (){
+  let idText = $("#nodeRename").val();
+  renameNode(selectedNode, idText, true);      
+});
+>>>>>>> 1a3abaf858e701b16bcd19c84896848f0e89d4a1
 
 })();

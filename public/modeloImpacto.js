@@ -228,12 +228,7 @@
         //cy.getElementById(selectedNode).style("background-color","#000000");
       }
     }*/
-    $("#edit").on ("click",function (){
-      let idText = $("#nodeRename").val();
-      cy.getElementById(selectedNode).data("idNome", idText);
-      $('#renameNodeModal').modal('hide');
-      $('#renameNodeModal').find('.modal-body input').val("")
-    });
+    
 
     function center(){
       cy.fit();

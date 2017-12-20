@@ -1,10 +1,11 @@
-/*
-:root{
-  --GoogleURL : GoogleURL;
-
+html{
+  overflow:hidden;
 }
-*/
 
+body {
+  font-family: helvetica;
+  font-size: 14px;
+}
 
 img{
   width:50px;
@@ -12,34 +13,11 @@ img{
   top:10px;
 }
 
-.btnShare{
-  color:white;
-  position:absolute;
-  top:20px;
-
-}
-
 .navbar-custom {
-    color: #000000;
-    background-color: #97c1ea;
-    border-color: #ffffff;
-    border-right: 30%;
+  color: #000000;
+  background-color: #97c1ea;
+  border-color: #ffffff
 
-}
-
-
-#idDaImagem2{
-  height:32px;
-  width: 32px; 
-  border-radius: 50%;
-  position: absolute;
-  
-
-}
-
-.dropdown{
-  position:absolute;
-  left:100%;
 }
 
 #imaplogo{
@@ -49,26 +27,41 @@ img{
   left:1%;
 }
 
-html{
-  overflow:hidden;
+.textoPagina{
+   position:absolute;
+   left:5%;
+   top:30%;
+   font-family: "Arial Black",Gadget, sans-serif;
+   font-size: 17px;
 }
 
-body {
- font-family: helvetica;
- font-size: 14px;
+.textoPagina2{
+   position:absolute;
+   left:62%;
+   top:30%;
 }
+
+
+.dropdown{
+  position:absolute;
+  left:110%;
+}
+
+
+
 
 #cy {
- width: 80%;
- height: 82%;
- margin-top:4%;
- border-style: double;
- border-color: #000000;
- position: absolute;
- right: 0;
- top: 0;
- /*z-index: 999;*/
+  width: 80%;
+  height: 82%;
+  margin-top:4%;
+  border-style: double;
+  border-color: #000000;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 999; 
 }
+
 
 #cy.active{
   width:94%;
@@ -79,14 +72,8 @@ h1 {
   font-size: 1em;
 }
 
-.ModeloImpacto{
-  position:absolute;
-  right:0;
-  top:0;
-}
-
 .chartContainer {
-  width: 25%;
+  width: 30%;
   margin: 20px auto;
   height: 300px;
 
@@ -95,14 +82,21 @@ h1 {
   top:50%;
 }
 
+
+input[type="radio"]{
+  margin: 0 10px 0 10px;
+}
+
+    
 .footer {
-  position: fixed;
+  position: absolute;
   bottom: 0%;
   width: 100%;
   /* Set the fixed height of the footer here */
   height: 60px;
   line-height: 60px; /* Vertically center the text there */
-  background-color: #BFBFBF;
+  background-color: #f5f5f5;
+  float:right;
 }
 
 .containerFooter {
@@ -110,30 +104,14 @@ h1 {
   max-width: 680px;
   padding: 0 15px;
   float:right;
-   color:black !important;
 }
-
- .textoPagina{
-   position:absolute;
-   left:6%;
-   top:30%;
-   font-family: "Arial Black",Gadget, sans-serif;
-   font-size: 17px;
- }
-        
- .textoPagina2{
-   position:absolute;
-   left:62%;
-   top:30%;
-}
-     
 
 .g-signin2{
   position:absolute;
   left:90%;
   top:15%;
 }
- 
+
 #idDaImagem{
   display: inline-block;
   width: 150px;
@@ -143,6 +121,7 @@ h1 {
   background-position: center center;
   background-size: cover;
 }
+
 
 /*
  * Dashboard
@@ -157,6 +136,3 @@ h1 {
   padding-top: 1.5rem;
   padding-bottom: 1.5rem;
 }
-
-
-

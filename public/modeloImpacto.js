@@ -182,7 +182,7 @@
         alert("Redirecting to Alternative Model");
         openPage = function(){
           //$_SESSION['alternativeNode'] = cy.getElementById(selectedNode);
-          location.href = "modeloAlt.php?Key="+cy.getElementById(selectedNode);
+          location.href = "modeloAlt.html?Key="+cy.getElementById(selectedNode);
         }
         //javascript:window.location.href="modeloAlt.php";
         javascript:openPage();
